@@ -11,7 +11,7 @@ UseCase -- needed for --> DataSourceFactory
 Main -- chooses filename for --> DataSourceFactory
 Main -- creates --> DataProcessor
 Main -- assigns --> DataProcessingStrategy
-DataSourceFactory -- uses --> DataSource
+DataSourceFactory -- fabricates --> DataSource
 DataSource -- outputs --> Data
 Data -- goes into --> DataProcessor
 DataProcessingStrategy -- to --> DataProcessor
@@ -20,21 +20,21 @@ DataProcessor -- calculates --> Result
 
 ## Use Cases
 
-The app should handle two `UseCase`s, one for football and one for weather.
+The app should handle two `UseCase`s, one for weather and one for football.
 
 ```mermaid
 classDiagram
 
 class UseCase{
     <<enumeration>>
-    +FOOTBALL
     +WEATHER
+    +FOOTBALL
 }
 ```
 
 ## Data Sources
 
-The data sources are CSV files. In the future, they may be JSON or XML or something else. They may also come from somewhere other than files, like as a database or a web service.
+The data sources are CSV files. In the future, they may be JSON or XML or something else. They may also come from somewhere other than files, like a database or a network resource.
 
 We'll use a factory pattern to create the correct `DataSource` for the given `UseCase`.
 
@@ -44,7 +44,7 @@ classDiagram
     class DataSource  {
         <<interface>>
           +accessResource(resourceURL: String): Boolean
-          +getData(): Data
+          +getData(): TabularData
     }
 
     class DataSourceFactory {
@@ -54,22 +54,22 @@ classDiagram
     class FileReader  {
         -readFile(fileURL: String): Boolean
         +accessResource(resourceURL: String): Boolean
-        +getData(): Data
+        +getData(): TabularData
     }
 
     class CSVReader {
-        +getData(): Data
+        +getData(): TabularData
     }
 
     class WeatherReader {
-        +getData(): numericalTabularData
+        +getData(): TabularData
     }
 
     class FootballReader {
-        +getData(): numericalTabularData
+        +getData(): TabularData
     }
 
-    DataSourceFactory --> DataSource : creates
+    DataSourceFactory --> DataSource : creates implementation of
     WeatherReader --> CSVReader : extends
     FootballReader --> CSVReader : extends
     CSVReader  --> FileReader : extends
@@ -83,25 +83,23 @@ The `Data` itself is a little troublesome. Since it comes from a CSV file, it's 
 
 - we don't know if the first row is a header or not (but probably is)
 - we don't know if the first column is a header or not (but probably isn't)
-- we don't know if the data is numeric or date-like or string or a mixture
+- we don't know if the data is numeric or date-like or string (or worse: a mixture!)
+- we don't know if the data is rectangular or not
 
-So for for the abstract base class, we'll only have optional row and column headers. The `numericalTabularData` class will have the actual data.
+So for the `TabularData` class, we'll have optional row and column headers (String arrays). The table data must be rectangular and of type string.
 
 ```mermaid
 classDiagram
-    class Data {
+    class TabularData {
         + rowHeader: Optional[String[]]
         + colHeader: Optional[String[]]
+        + rows: int
+        + cols: int
+        + data: String[][]
     }
-
-    class numericalTabularData {
-        + tabularData: float[][]
-    }
-
-    Data <-- numericalTabularData : extends
 ```
 
-The DataReaders are responsible for parsing the data from the `DataSource` into the `numericalTabularData` object. They should throw an exception if the data is not or somehow corrupt.
+The use-case specific DataReaders are responsible for parsing the data from the `DataSource` into the `TabularData` object. They should throw an exception if the data is not rectangular or somehow corrupt.
 
 ## Data Processing
 
@@ -130,7 +128,7 @@ classDiagram
     DataProcessor --> DataProcessingStrategy : uses
 ```
 
-Choosing which `Result` type to return is the task of the `Strategy`.
+Choosing which `Result` type to return is the task of the `Strategy`. If the `Strategy` returns an empty `Optional`, the `DataProcessor` will return an empty `Optional` as well. If the `Strategy` can not correctly parse some table data (e.g. if the data is not numeric), it will throw an exception.
 
 ## Results
 
@@ -145,9 +143,23 @@ class Result{
     +abstract String toString()
 }
 
-class firstColumnEntryResult{
+class StringResult{
     +String toString()
 }
 
-firstColumnEntryResult --> Result: implements
+class intResult{
+    +String toString()
+}
+
+class floatResult{
+    +String toString()
+}
+
+intResult --> Result: implements
+floatResult --> Result: implements
+StringResult --> Result: implements
+```
+
+```
+
 ```
