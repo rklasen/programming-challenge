@@ -35,7 +35,7 @@ public class colDiffFinderStratTest {
     void strategyFindsCorrectColumnInts() throws Exception {
         DataProcessor processor = new DataProcessor(new columnWithMinimumDifferenceFinderStrategy(0, 1));
 
-        String[][] testData = { { "1", "2" }, { "2", "3" }, { "3", "4" }, { "5", "5.1" } };
+        String[][] testData = { { "1", "3" }, { "2", "5" }, { "3", "6" }, { "5", "6" } };
         var testTabular = convertToTableData(testData);
 
         Result result = processor.process(testTabular);
@@ -43,6 +43,22 @@ public class colDiffFinderStratTest {
         // remember, this strategy finds the first entry of the row with the smallest
         // difference
         Result expectedResult = new StringResult("5");
+
+        assertEquals(expectedResult.toString(), result.toString());
+    }
+
+    @Test
+    void strategyFindsCorrectColumnDifferentInts() throws Exception {
+        DataProcessor processor = new DataProcessor(new columnWithMinimumDifferenceFinderStrategy(0, 1));
+
+        String[][] testData = { { "1", "2" }, { "2", "5" }, { "3", "6" }, { "5", "9" } };
+        var testTabular = convertToTableData(testData);
+
+        Result result = processor.process(testTabular);
+
+        // remember, this strategy finds the first entry of the row with the smallest
+        // difference
+        Result expectedResult = new StringResult("1");
 
         assertEquals(expectedResult.toString(), result.toString());
     }
