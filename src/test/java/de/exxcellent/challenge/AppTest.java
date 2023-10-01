@@ -1,12 +1,11 @@
 package de.exxcellent.challenge;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
  * Example JUnit 5 test case.
+ * 
  * @author Benjamin Schmid <benjamin.schmid@exxcellent.de>
  */
 class AppTest {
@@ -19,8 +18,13 @@ class AppTest {
     }
 
     @Test
-    void aPointlessTest() {
-        assertEquals("successful", successLabel, "My expectations were not met");
+    void testAppWeather() {
+        App app = new App();
+        String result = app.runWeatherTask();
+        String expected = "Day of minimal Temperature Difference:";
+
+        // test if the result contains the expected string
+        assert (result.contains(expected));
     }
 
     @Test
