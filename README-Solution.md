@@ -160,6 +160,6 @@ floatResult --> Result: implements
 StringResult --> Result: implements
 ```
 
-```
+## Exceptions
 
-```
+For the sake of completeness, we'll also have a `TableNotRectangularException` and a `TableNotParsableException` which may be thrown by the `FileReader` (which ensures the data is rectangular) and the Weather/Football Readers, which need to parse String values to floats.
