@@ -14,7 +14,7 @@ public class DataSourceFactoryTest {
     void dataSourceFactoryCreatesWeatherReader() throws Exception {
         DataSourceFactory dsf = new DataSourceFactory();
         DataSource ds = dsf.createDataSource(UseCase.WEATHER,
-                "src/main/resources/de/exxcellent/challenge/weather.csv");
+                "src/test/resources/de/exxcellent/challenge/simple.csv");
 
         assert (ds instanceof WeatherReader);
     }
@@ -25,7 +25,7 @@ public class DataSourceFactoryTest {
 
         assertThrows(IllegalArgumentException.class, () -> {
             dsf.createDataSource(UseCase.NOTEXISTING,
-                    "src/main/resources/de/exxcellent/challenge/weather.csv");
+                    "src/test/resources/de/exxcellent/challenge/simple.csv");
         });
     }
 

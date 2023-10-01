@@ -20,12 +20,10 @@ public class CSVReader extends FileReader {
 
         // super class is FileReader, so we have super.content
         super.content.forEach(line -> {
-            // csv is comma separated, so we split at the comma and put the result to an
-            // arrayList
             ArrayList<String> row = new ArrayList<>();
             String[] lineArray = line.split(",");
             for (String s : lineArray) {
-                row.add(s);
+                row.add(s.trim());
             }
             tabularData.add(row);
         });
