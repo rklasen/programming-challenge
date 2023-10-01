@@ -36,17 +36,46 @@ public final class App {
             return "Day of minimal Temperature Difference: " + weatherResult.toString();
 
         } catch (FileNotFoundException e) {
-            System.out.println("File not found.");
+            System.err.println("File not found.");
         } catch (TableNotParsableException e) {
-            System.out.println("CSV file is not parsable.");
+            System.err.println("CSV file is not parsable.");
         } catch (TableNotRectangularException e) {
-            System.out.println("CSV file is not rectangular.");
+            System.err.println("CSV file is not rectangular.");
+        }
+        return "There was an exception.";
+    }
+
+    public String runFootballTask() {
+
+        try {
+            DataSource footballDataSource = new DataSourceFactory().createDataSource(UseCase.FOOTBALL,
+                    "src/main/resources/de/exxcellent/challenge/football.csv");
+
+            TabularData footballData = footballDataSource.getData();
+            DataProcessor footballProcessor = new DataProcessor(new columnWithMinimumDifferenceFinderStrategy(5, 6));
+            Result footballResult = footballProcessor.process(footballData);
+            return "Best football Team: " + footballResult.toString();
+
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found.");
+        } catch (TableNotParsableException e) {
+            System.err.println("CSV file is not parsable.");
+        } catch (TableNotRectangularException e) {
+            System.err.println("CSV file is not rectangular.");
         }
         return "There was an exception.";
     }
 
     public static void main(String... args) {
+
         App app = new App();
-        System.out.println(app.runWeatherTask());
+
+        // check if the --football argument is passed
+        if (args.length == 1 && args[0].equals("--football")) {
+            System.out.println(app.runFootballTask());
+        } else {
+            System.out.println(app.runWeatherTask());
+        }
+
     }
 }

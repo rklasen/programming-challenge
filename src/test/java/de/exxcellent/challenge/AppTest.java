@@ -23,13 +23,23 @@ class AppTest {
         String result = app.runWeatherTask();
         String expected = "Day of minimal Temperature Difference:";
 
-        // test if the result contains the expected string
         assert (result.contains(expected));
     }
 
     @Test
     void runFootball() {
-        App.main("--football", "football.csv");
+
+        App app = new App();
+        String result = app.runFootballTask();
+        String expected = "Best football Team:";
+
+        assert (result.contains(expected));
+
+    }
+
+    @Test
+    void appParsesArgumentCorreclty() {
+        App.main("--football");
     }
 
 }

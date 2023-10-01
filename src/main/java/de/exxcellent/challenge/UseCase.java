@@ -2,5 +2,6 @@ package de.exxcellent.challenge;
 
 public enum UseCase {
     NOTEXISTING,
-    WEATHER
+    WEATHER,
+    FOOTBALL
 }
